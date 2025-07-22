@@ -9,6 +9,7 @@ import gift.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static gift.product.dto.OptionResponseDto.fromEntity;
 
@@ -30,19 +31,21 @@ public class OptionService {
                 () -> new IllegalArgumentException("Product id가 옳지 않습니다.")
         );
 
+        Optional<Option> option = optionRepository.findByName(dto.getName());
+
         //옵션 중복 불가
-        if(optionRepository.findByName(dto.getName()).isPresent()){
+        if(option.isPresent() && option.get().getProduct().equals(product)){
             throw new IllegalArgumentException("Option 이름이 이미 존재합니다.");
         }
 
-        Option option = new Option(
+        Option saveOption = new Option(
                 null,
                 dto.getName(),
                 dto.getQuantity(),
                 product
         );
 
-        return fromEntity(optionRepository.save(option));
+        return fromEntity(optionRepository.save(saveOption));
     }
 
     //옵션 조회
