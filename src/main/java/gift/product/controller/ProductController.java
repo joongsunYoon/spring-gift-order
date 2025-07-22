@@ -72,7 +72,7 @@ public class ProductController {
     @PostMapping("/{id}/options")
     public ResponseEntity<ApiResponse<OptionResponseDto>> addOption(@PathVariable Long id, @Valid @RequestBody OptionRequestDto optionRequestDto) {
         OptionResponseDto optionResponseDto = optionService.addOption(id, optionRequestDto);
-        return  ResponseEntity.status(201).body(new ApiResponse<>(201,"Option 추가 성공", optionResponseDto));
+        return  ResponseEntity.ok(new ApiResponse<>(204,"Option 추가 성공", optionResponseDto));
     }
 
     @GetMapping("/{id}/options")
