@@ -1,14 +1,17 @@
 package gift.kakao.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.exception.KakaoException;
+import gift.kakao.dto.KakaoErrorResponse;
 import gift.kakao.dto.KakaoTokenResponseDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -44,10 +47,16 @@ public class KakaoService {
         try{
             var response = restTemplate.exchange(request, KakaoTokenResponseDto.class);
             return response.getBody();
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
 
+        } catch (HttpClientErrorException ex) {
+            try{
+                ObjectMapper mapper = new ObjectMapper();
+                KakaoErrorResponse errorResponse = mapper.readValue(ex.getResponseBodyAsString(), KakaoErrorResponse.class);
+                throw new KakaoException(errorResponse);
+            }catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }
