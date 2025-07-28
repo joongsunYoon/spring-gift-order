@@ -2,6 +2,6 @@ package gift.order.dto;
 
 public record OrderRequestDto(
         Long optionId,
-        Integer quantity,
+        Long quantity,
         String message
 ) {}
