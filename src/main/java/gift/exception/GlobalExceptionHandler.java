@@ -1,5 +1,6 @@
 package gift.exception;
 
+import gift.kakao.dto.KakaoErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -29,6 +30,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiResponse(400,ex.getMessage(),null));
+    }
+
+    @ExceptionHandler(KakaoException.class)
+    public ResponseEntity<ApiResponse<KakaoErrorResponse>> handleKakaoException(KakaoException ex) {
+
+        return ResponseEntity.status(ex.getStatus())
+                .body(new ApiResponse<>(ex.getStatus(), ex.getMessage(), ex.getResponse()));
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse(500, ex.getMessage(), null));
     }
 
     public record ApiResponse<T> (int status, String message, T data) {}
