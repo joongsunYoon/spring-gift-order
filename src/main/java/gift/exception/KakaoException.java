@@ -1,6 +1,6 @@
 package gift.exception;
 
-import gift.kakao.dto.KakaoErrorResponse;
+import gift.external.kakao.dto.KakaoErrorResponse;
 
 public class KakaoException extends RuntimeException {
 

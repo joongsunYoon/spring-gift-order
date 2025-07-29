@@ -1,6 +1,6 @@
 package gift.exception;
 
-import gift.kakao.dto.KakaoErrorResponse;
+import gift.external.kakao.dto.KakaoErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

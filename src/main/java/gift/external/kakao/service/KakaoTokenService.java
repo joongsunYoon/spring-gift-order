@@ -1,16 +1,13 @@
-package gift.kakao.service;
+package gift.external.kakao.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.exception.KakaoException;
-import gift.kakao.dto.KakaoErrorResponse;
-import gift.kakao.dto.KakaoMessageRequestDto;
-import gift.kakao.dto.KakaoMessageResponseDto;
-import gift.kakao.dto.KakaoTokenResponseDto;
-import gift.kakao.entity.KakaoToken;
-import gift.kakao.repository.KakaoRepository;
+import gift.external.kakao.dto.KakaoErrorResponse;
+import gift.external.kakao.dto.KakaoTokenResponseDto;
+import gift.external.kakao.entity.KakaoToken;
+import gift.external.kakao.repository.KakaoRepository;
 import gift.member.entity.Member;
-import gift.order.dto.OrderRequestDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
@@ -24,10 +21,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
-import static gift.kakao.dto.KakaoMessageRequestDto.fromOrderRequestDto;
-
 @Service
-public class KakaoService {
+public class KakaoTokenService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -39,7 +34,7 @@ public class KakaoService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    public KakaoService(RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper, KakaoRepository kakaoRepository) {
+    public KakaoTokenService(RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper, KakaoRepository kakaoRepository) {
         this.restTemplate = restTemplateBuilder.build();
         this.objectMapper = objectMapper;
         this.kakaoRepository = kakaoRepository;
@@ -90,38 +85,6 @@ public class KakaoService {
         return kakaoRepository.findByMemberId(member.getId()).orElseThrow(
                 () -> new IllegalArgumentException("Member가 부적절합니다")
         ).getAccessToken();
-    }
-
-    public KakaoMessageResponseDto sendMessage(OrderRequestDto orderRequestDto, String accessToken){
-        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        headers.setBearerAuth(accessToken);
-
-        KakaoMessageRequestDto kakaoMessageRequestDto = fromOrderRequestDto(orderRequestDto);
-
-        try{
-            String json = objectMapper.writeValueAsString(kakaoMessageRequestDto.templateObject());
-            LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-            body.add("template_object" , json);
-            var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
-            System.out.println(request);
-            var response = restTemplate.exchange(request, KakaoMessageResponseDto.class);
-
-            return response.getBody();
-
-
-        } catch (HttpClientErrorException ex) {
-            try{
-                KakaoErrorResponse errorResponse = objectMapper.readValue(ex.getResponseBodyAsString(), KakaoErrorResponse.class);
-                throw new KakaoException(errorResponse);
-            }catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        } catch(JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }

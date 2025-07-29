@@ -2,7 +2,8 @@ package gift.order.controller;
 
 import gift.auth.LoginMember;
 import gift.exception.GlobalExceptionHandler.ApiResponse;
-import gift.kakao.service.KakaoService;
+import gift.external.kakao.service.KakaoMessageService;
+import gift.external.kakao.service.KakaoTokenService;
 import gift.member.entity.Member;
 import gift.order.dto.OrderRequestDto;
 import gift.order.dto.OrderResponseDto;
@@ -17,18 +18,21 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    private final KakaoService kakaoService;
-    public OrderController(OrderService orderService, KakaoService kakaoService) {
+    private final KakaoTokenService kakaoTokenService;
+    private final KakaoMessageService kakaoMessageService;
+
+    public OrderController(OrderService orderService, KakaoTokenService kakaoTokenService, KakaoMessageService kakaoMessageService) {
         this.orderService = orderService;
-        this.kakaoService = kakaoService;
+        this.kakaoTokenService = kakaoTokenService;
+        this.kakaoMessageService = kakaoMessageService;
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<OrderResponseDto>> createOrder(@RequestBody OrderRequestDto orderRequestDto,
                                                                      @LoginMember Member member) {
         OrderResponseDto dto = orderService.createOrder(orderRequestDto,member.getId());
-        String kakaoToken = kakaoService.findAccessToken(member);
-        kakaoService.sendMessage(orderRequestDto, kakaoToken);
+        String kakaoToken = kakaoTokenService.findAccessToken(member);
+        kakaoMessageService.sendMessage(orderRequestDto, kakaoToken);
         return ResponseEntity.status(201).body(new ApiResponse<>(201,"주문 성공", dto));
     }
 

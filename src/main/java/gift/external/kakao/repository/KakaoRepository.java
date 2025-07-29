@@ -1,6 +1,6 @@
-package gift.kakao.repository;
+package gift.external.kakao.repository;
 
-import gift.kakao.entity.KakaoToken;
+import gift.external.kakao.entity.KakaoToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package gift.kakao.entity;
+package gift.external.kakao.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
