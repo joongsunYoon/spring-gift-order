@@ -27,8 +27,9 @@ public class KakaoService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    public KakaoService(RestTemplateBuilder restTemplateBuilder) {
+    public KakaoService(RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper, KakaoRepository kakaoRepository) {
         this.restTemplate = restTemplateBuilder.build();
+        this.objectMapper = objectMapper;
     }
 
     public KakaoTokenResponseDto getAccessToken(String code) {
@@ -52,6 +53,39 @@ public class KakaoService {
             try{
                 ObjectMapper mapper = new ObjectMapper();
                 KakaoErrorResponse errorResponse = mapper.readValue(ex.getResponseBodyAsString(), KakaoErrorResponse.class);
+                KakaoErrorResponse errorResponse = objectMapper.readValue(ex.getResponseBodyAsString(), KakaoErrorResponse.class);
+                throw new KakaoException(errorResponse);
+            }catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
+
+
+    public KakaoMessageResponseDto sendMessage(OrderRequestDto orderRequestDto, String accessToken){
+        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        headers.setBearerAuth(accessToken);
+
+        KakaoMessageRequestDto kakaoMessageRequestDto = fromOrderRequestDto(orderRequestDto);
+
+        try{
+            String json = objectMapper.writeValueAsString(kakaoMessageRequestDto.templateObject());
+            LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("template_object" , json);
+            var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
+            System.out.println(request);
+            var response = restTemplate.exchange(request, KakaoMessageResponseDto.class);
+
+            return response.getBody();
+
+
+        } catch (HttpClientErrorException ex) {
+            try{
+                KakaoErrorResponse errorResponse = objectMapper.readValue(ex.getResponseBodyAsString(), KakaoErrorResponse.class);
                 throw new KakaoException(errorResponse);
             }catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
