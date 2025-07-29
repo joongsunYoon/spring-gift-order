@@ -24,7 +24,7 @@ public class OrderController {
         return ResponseEntity.status(201).body(new ApiResponse<>(201,"주문 성공", dto));
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<OrderResponseDto>> getOrder(@PathVariable Long id) {
         OrderResponseDto dto = orderService.findOrder(id);
         return ResponseEntity.ok(new ApiResponse<>(200,"주문 단일 조회 성공", dto));
@@ -36,14 +36,14 @@ public class OrderController {
         return ResponseEntity.ok(new ApiResponse<>(200,"주문 전체 조회 성공", dto));
     }
 
-    @PatchMapping
+    @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<OrderResponseDto>> updateOrder(@PathVariable Long id,
                                                         @RequestBody OrderRequestDto orderRequestDto) {
         OrderResponseDto dto = orderService.updateOrder(id, orderRequestDto);
         return ResponseEntity.status(200).body(new ApiResponse<>(200, "주문 수정 성공" , dto));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
