@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface KakaoRepository extends JpaRepository<KakaoToken,Long> {
+public interface KakaoTokenRepository extends JpaRepository<KakaoToken,Long> {
     Optional<KakaoToken> findByMemberId(Long memberId);
 }

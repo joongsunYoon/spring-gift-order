@@ -6,7 +6,7 @@ import gift.exception.KakaoException;
 import gift.external.kakao.dto.KakaoErrorResponse;
 import gift.external.kakao.dto.KakaoTokenResponseDto;
 import gift.external.kakao.entity.KakaoToken;
-import gift.external.kakao.repository.KakaoRepository;
+import gift.external.kakao.repository.KakaoTokenRepository;
 import gift.member.entity.Member;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -26,7 +26,7 @@ public class KakaoTokenService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private final KakaoRepository kakaoRepository;
+    private final KakaoTokenRepository kakaoTokenRepository;
 
     @Value("${kakao.client-id}")
     private String clientId;
@@ -34,10 +34,10 @@ public class KakaoTokenService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    public KakaoTokenService(RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper, KakaoRepository kakaoRepository) {
+    public KakaoTokenService(RestTemplateBuilder restTemplateBuilder, ObjectMapper objectMapper, KakaoTokenRepository kakaoTokenRepository) {
         this.restTemplate = restTemplateBuilder.build();
         this.objectMapper = objectMapper;
-        this.kakaoRepository = kakaoRepository;
+        this.kakaoTokenRepository = kakaoTokenRepository;
     }
 
     public KakaoTokenResponseDto getAccessToken(String code , Long memberId) {
@@ -59,7 +59,7 @@ public class KakaoTokenService {
 
             //값이 정상적으로 들어왔을 경우 db에 저장
             if(response.getStatusCode().is2xxSuccessful()) {
-                kakaoRepository.save(new KakaoToken(
+                kakaoTokenRepository.save(new KakaoToken(
                         kakaoTokenResponseDto.accessToken(),
                         kakaoTokenResponseDto.expiresIn(),
                         kakaoTokenResponseDto.refreshToken(),
@@ -82,7 +82,7 @@ public class KakaoTokenService {
     }
 
     public String findAccessToken(Member member) {
-        return kakaoRepository.findByMemberId(member.getId()).orElseThrow(
+        return kakaoTokenRepository.findByMemberId(member.getId()).orElseThrow(
                 () -> new IllegalArgumentException("Member가 부적절합니다")
         ).getAccessToken();
     }
