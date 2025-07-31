@@ -15,18 +15,19 @@ public class Wish {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id" , nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id" , nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @Column(nullable = false)
     private Integer quantity;
 
-    public Wish() {}
+    protected Wish() {}
+
     public Wish(Long id, Member member, Product product, Integer quantity) {
         this.id = id;
         this.member = member;

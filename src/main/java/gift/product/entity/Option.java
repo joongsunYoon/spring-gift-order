@@ -15,7 +15,8 @@ public class Option {
     @JoinColumn(name = "product", nullable = false)
     private Product product;
 
-    public Option() {}
+    protected Option() {}
+
     public Option(Long id, String name, Long quantity, Product product) {
         this.id = id;
         this.name = name;
@@ -38,7 +39,7 @@ public class Option {
     public Product getProduct() {
         return product;
     }
-    
+
     //옵션의 수량을 지정된 숫자만큼 빼는 기능
     public void subtractQuantity(Long quantity) {
         this.quantity -= quantity;

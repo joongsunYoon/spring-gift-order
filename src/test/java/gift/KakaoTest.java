@@ -4,11 +4,10 @@ import gift.auth.LoginMemberArgumentResolver;
 import gift.exception.KakaoException;
 import gift.interceptor.Interceptor;
 import gift.interceptor.WebMvcConfig;
-import gift.kakao.controller.KakaoController;
-import gift.kakao.dto.KakaoErrorResponse;
-import gift.kakao.dto.KakaoTokenResponseDto;
-import gift.kakao.service.KakaoService;
-import gift.member.service.MemberService;
+import gift.external.kakao.controller.KakaoController;
+import gift.external.kakao.dto.KakaoErrorResponse;
+import gift.external.kakao.dto.KakaoTokenResponseDto;
+import gift.external.kakao.service.KakaoTokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,7 +39,7 @@ public class KakaoTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private KakaoService kakaoService;
+    private KakaoTokenService kakaoTokenService;
 
     @Test
     void callback_정상동작_테스트() throws Exception {
@@ -54,7 +53,7 @@ public class KakaoTest {
                 10000
         );
 
-        when(kakaoService.getAccessToken(code)).thenReturn(mockToken);
+        when(kakaoTokenService.getAccessToken(code)).thenReturn(mockToken);
 
         //when & then
         mockMvc.perform(get("/oauth/kakao/callback")
@@ -77,7 +76,7 @@ public class KakaoTest {
                 "KOE320"
         );
 
-        when(kakaoService.getAccessToken(code))
+        when(kakaoTokenService.getAccessToken(code))
                 .thenThrow(new KakaoException(kakaoError));
 
         //when & then
