@@ -11,6 +11,7 @@ public class KakaoToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String token;
     private String accessToken;
     private String refreshToken;
     private Integer expiresIn;
@@ -19,12 +20,16 @@ public class KakaoToken {
 
     protected KakaoToken() {}
 
-    public KakaoToken(String accessToken, Integer expiresIn, String refreshToken, Integer refreshTokenExpiresIn, Long memberId) {
+    public KakaoToken(String token, String accessToken, Integer expiresIn, String refreshToken, Integer refreshTokenExpiresIn) {
+        this.token = token;
         this.accessToken = accessToken;
         this.expiresIn = expiresIn;
         this.refreshToken = refreshToken;
         this.refreshTokenExpiresIn = refreshTokenExpiresIn;
-        this.memberId = memberId;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     public String getAccessToken() {

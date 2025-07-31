@@ -35,16 +35,15 @@ public class KakaoController {
     public void authorize(HttpServletResponse response) throws IOException {
         String redirectUrl = "https://kauth.kakao.com/oauth/authorize"
                 + "?client_id=" + clientId
-                + "&redirect_uri=" + redirectUri + "/oauth/kakao/callback"
+                + "&redirect_uri=" + redirectUri
                 + "&response_type=code";
 
         response.sendRedirect(redirectUrl);
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<ApiResponse<KakaoTokenResponseDto>> callback(@RequestParam("code") String code,
-                                                                       @LoginMember Member member) {
-        KakaoTokenResponseDto token = kakaoTokenService.getAccessToken(code, member.getId());
+    public ResponseEntity<ApiResponse<KakaoTokenResponseDto>> callback(@RequestParam("code") String code) {
+        KakaoTokenResponseDto token = kakaoTokenService.getAccessToken(code);
         return ResponseEntity.ok(new ApiResponse<>(200, "토큰 발급 성공", token));
     }
 
