@@ -25,8 +25,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(interceptor).addPathPatterns(
                 "/api/products/**",
                 "/api/wishlists/**",
-                "/api/orders/**",
-                "/oauth/kakao/**");
+                "/api/orders/**");
     }
 
     @Override
