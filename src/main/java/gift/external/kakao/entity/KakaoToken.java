@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class KakaoToken{
+public class KakaoToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,8 @@ public class KakaoToken{
     private Integer refreshTokenExpiresIn;
     private Long memberId;
 
-    public KakaoToken() {}
+    protected KakaoToken() {}
+
     public KakaoToken(String accessToken, Integer expiresIn, String refreshToken, Integer refreshTokenExpiresIn, Long memberId) {
         this.accessToken = accessToken;
         this.expiresIn = expiresIn;

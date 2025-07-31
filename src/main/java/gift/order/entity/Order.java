@@ -17,10 +17,11 @@ public class Order {
     private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_id" , nullable = false)
+    @JoinColumn(name = "option_id", nullable = false)
     private Option option;
 
     protected Order() {}
+
     public Order(Long quantity, String message, Option option, LocalDateTime orderDateTime, Long memberId) {
         this.quantity = quantity;
         this.message = message;
