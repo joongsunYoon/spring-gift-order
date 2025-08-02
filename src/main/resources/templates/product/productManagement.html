@@ -48,7 +48,7 @@
         const id = document.getElementById('productId').value;
 
         if(id){
-            updateProduct();
+            updateProduct(id);
         }else{
             addProduct();
         }
@@ -61,10 +61,14 @@
         const imageUrl = document.getElementById('productImageUrl').value;
 
         const payload = { name, price, imageUrl };
+        const token = localStorage.getItem("accessToken");
 
         fetch('/api/products', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json' ,
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(payload)
         })
             .then(res => {
@@ -93,12 +97,20 @@
 
     // 상품 전체 조회
     function fetchProducts() {
-        fetch('/api/products')
+
+        const token = localStorage.getItem("accessToken");
+
+        fetch('/api/products',{
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(res => res.json())
             .then(products => {
                 const tbody = document.querySelector('#productTable tbody');
                 tbody.innerHTML = '';
-                products.forEach(p => {
+                products.content.forEach(p => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${p.id}</td>
@@ -115,8 +127,14 @@
 
     // 상품 삭제
     function deleteProduct(id) {
+
+        const token = localStorage.getItem("accessToken");
+
         fetch(`/api/products/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         })
             .then(() => fetchProducts());
     }
@@ -127,11 +145,15 @@
         const price = document.getElementById('productPrice').value;
         const imageUrl = document.getElementById('productImageUrl').value;
 
+        const token = localStorage.getItem("accessToken");
         const payload = { id ,name, price, imageUrl };
 
         fetch(`/api/products/${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(payload)
         })
             .then(res => {
